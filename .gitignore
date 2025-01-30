@@ -1,0 +1,75 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Django specific files
+*.log
+*.pot
+*.pyc
+*.sqlite3
+*.db
+
+# Ignore artic-data folder
+artic-data/
+
+# Django migrations folder
+*/migrations/*
+
+# Virtual environment
+venv/
+.env/
+*.env
+.venv/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Local settings
+local_settings.py
+
+# Static files
+staticfiles/
+media/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# pytest
+.cache/
+
+# Coverage reports
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+
+# Translations
+*.mo
+*.po
+
+# Docker
+docker-compose.override.yml
+*.dockerfile
+
+# Sentry
+.sentry/
+
+# VS Code settings
+.vscode/settings.json
+
+# MacOS-specific files
+.DS_Store
+
+# Windows-specific files
+Thumbs.db
+
+# Other system files
+*.swp

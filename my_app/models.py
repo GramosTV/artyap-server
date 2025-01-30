@@ -1,0 +1,38 @@
+from django.db import models
+
+class Artwork(models.Model):
+    title = models.TextField(null=True, blank=True)
+    main_reference_number = models.CharField(max_length=50, null=True, blank=True)
+    date_start = models.IntegerField(null=True, blank=True)
+    date_end = models.IntegerField(null=True, blank=True)
+    date_display = models.CharField(max_length=255, null=True, blank=True)
+    date_qualifier_title = models.CharField(max_length=255, null=True, blank=True)
+    artist_display = models.TextField(null=True, blank=True)
+    place_of_origin = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    short_description = models.TextField(null=True, blank=True)
+    dimensions = models.TextField(null=True, blank=True)
+    medium_display = models.TextField(null=True, blank=True)
+    credit_line = models.TextField(null=True, blank=True)
+    catalogue_display = models.TextField(null=True, blank=True)
+    publication_history = models.TextField(null=True, blank=True)
+    exhibition_history = models.TextField(null=True, blank=True)
+    provenance_text = models.TextField(null=True, blank=True)
+    edition = models.CharField(max_length=255, null=True, blank=True)
+    is_public_domain = models.BooleanField(default=False, null=True, blank=True)
+    copyright_notice = models.CharField(max_length=255, null=True, blank=True)
+    is_on_view = models.BooleanField(default=False, null=True, blank=True)
+    gallery_title = models.CharField(max_length=255, null=True, blank=True)
+    gallery_id = models.CharField(max_length=255, null=True, blank=True)
+    artwork_type_title = models.CharField(max_length=255, null=True, blank=True)
+    artwork_type_id = models.IntegerField(null=True, blank=True)
+    department_title = models.CharField(max_length=255, null=True, blank=True)
+    department_id = models.CharField(max_length=50, null=True, blank=True)
+    artist_id = models.IntegerField(null=True, blank=True)
+    artist_title = models.CharField(max_length=255, null=True, blank=True)
+    style_id = models.CharField(max_length=255, null=True, blank=True)
+    style_title = models.CharField(max_length=255, null=True, blank=True)
+    image_id = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
