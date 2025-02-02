@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Artwork, Artist
+from .models import Artwork, Artist, Comment
 from django.contrib.auth import get_user_model
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -27,3 +27,17 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class CommentSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'artwork', 'parent', 'text', 'created_at', 'replies']
+        read_only_fields = ['user', 'created_at']
+
+    def get_replies(self, obj):
+        """Recursively serialize child comments (replies)"""
+        if obj.replies.exists():
+            return CommentSerializer(obj.replies.all(), many=True).data
+        return []

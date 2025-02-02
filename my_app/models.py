@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser, Group, Permission, User
 class Artist(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=255)
@@ -62,10 +62,20 @@ class Artwork(models.Model):
     def __str__(self):
         return self.title
 
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=150, unique=True)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'email']
-    groups = models.ManyToManyField(Group, related_name='custom_user_groups', blank=True)
-    user_permissions = models.ManyToManyField(Permission, related_name='custom_user_permissions', blank=True)
+# class User(AbstractUser):
+#     email = models.EmailField(unique=True)
+#     username = models.CharField(max_length=150, unique=True)
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = ['username', 'email']
+#     groups = models.ManyToManyField(Group, related_name='custom_user_groups', blank=True)
+#     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_permissions', blank=True)
+
+class Comment(models.Model):
+    artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.text[:20]}"
