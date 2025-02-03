@@ -28,7 +28,13 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+class UserForCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['username']
+
 class CommentSerializer(serializers.ModelSerializer):
+    user = UserForCommentSerializer()
     replies = serializers.SerializerMethodField()
 
     class Meta:
@@ -37,7 +43,6 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'created_at']
 
     def get_replies(self, obj):
-        """Recursively serialize child comments (replies)"""
         if obj.replies.exists():
             return CommentSerializer(obj.replies.all(), many=True).data
         return []
