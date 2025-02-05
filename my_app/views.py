@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views import View
 from .models import Artwork, Comment
-from django.db.models import Q, Min, Max
+from django.db.models import OuterRef, Subquery, Q, Min, Max
 from rest_framework import generics, viewsets, permissions
 from .serializers import ArtworkSerializer, UserSerializer, CommentSerializer
 from rest_framework.response import Response
@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+
 class ArtworkSearchView(generics.ListAPIView):
     serializer_class = ArtworkSerializer
 
@@ -166,4 +167,21 @@ def add_comment(request):
 def get_authenticated_user(request):
     user = request.user
     serializer = UserSerializer(user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def trending_artworks(request):
+    # Get the latest comment created_at for each artwork
+    latest_comment = Comment.objects.filter(
+        artwork=OuterRef('pk')
+    ).order_by('-created_at')  # Sort by created_at descending
+
+    # Annotate each artwork with the latest comment's created_at date
+    trending_artworks = Artwork.objects.annotate(
+        latest_comment_date=Subquery(latest_comment.values('created_at')[:1])
+    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:20]
+
+    # Serialize the trending artworks
+    serializer = ArtworkSerializer(trending_artworks, many=True)
+    
     return Response(serializer.data)

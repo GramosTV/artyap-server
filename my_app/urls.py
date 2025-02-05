@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ArtworkSearchView, ArtworkDetailView, random_artwork, random_artworks,art_of_the_day, login_view, logout_view , register_view, get_csrf_token, add_comment, get_authenticated_user
+from .views import ArtworkSearchView, ArtworkDetailView, random_artwork, random_artworks,art_of_the_day, login_view, logout_view , register_view, get_csrf_token, add_comment, get_authenticated_user, trending_artworks
 
 urlpatterns = [
     path('search/', ArtworkSearchView.as_view(), name='artwork_search'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('csrf', get_csrf_token, name='csrf'),
     path('add-comment', add_comment, name='add_comment'),
     path("auth/user/", get_authenticated_user, name="auth-user"),
+    path("trending", trending_artworks, name="trending"),
 ]
