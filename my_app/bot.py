@@ -18,7 +18,7 @@ def generate_comment(artwork):
     prompt = (
         f"Comment on this artwork made by {artwork.artist.title} titled '{artwork.title}': "
         f"{artwork.description}. Make sure the comment is respectful and relevant to the artwork. "
-        "Make it seem like a real user commenting on an art forum."
+        "Make it seem like a real user commenting on an art forum. Answer with just the generated comment."
     )
     
     try:
