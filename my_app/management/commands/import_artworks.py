@@ -1,7 +1,7 @@
 import os
 import json
 from django.core.management.base import BaseCommand
-from my_app.models import Artwork, Artist, Gallery
+from my_app.models import Artwork, Artist, Gallery, ArtworkType
 from django.conf import settings
 import re
 
@@ -27,6 +27,10 @@ class Command(BaseCommand):
                     if data.get('gallery_id'):
                         gallery, _ = Gallery.objects.get_or_create(id=data['gallery_id'])
 
+                    artworktype = None
+                    if data.get('artwork_type_id'):
+                        artworktype, _ = ArtworkType.objects.get_or_create(id=data['artwork_type_id'])
+
                     description = data.get('description', '')
                     if description:
                         description = re.sub(r'<[^>]+>', '', description)
@@ -35,6 +39,8 @@ class Command(BaseCommand):
                         'title': data.get('title'),
                         'artist': artist,
                         'gallery': gallery,
+                        'artworktype': artworktype,
+                        'description': description,
                         'main_reference_number': data.get('main_reference_number'),
                         'date_start': data.get('date_start'),
                         'date_end': data.get('date_end'),
@@ -42,7 +48,6 @@ class Command(BaseCommand):
                         'date_qualifier_title': data.get('date_qualifier_title'),
                         'artist_display': data.get('artist_display'),
                         'place_of_origin': data.get('place_of_origin'),
-                        'description': description,
                         'short_description': data.get('short_description'),
                         'dimensions': data.get('dimensions'),
                         'medium_display': data.get('medium_display'),
@@ -55,10 +60,13 @@ class Command(BaseCommand):
                         'is_public_domain': data.get('is_public_domain'),
                         'copyright_notice': data.get('copyright_notice'),
                         'is_on_view': data.get('is_on_view'),
-                        'artwork_type_id': data.get('artwork_type_id'),
                         'department_id': data.get('department_id'),
                         'style_id': data.get('style_id'),
-                        'image_id': data.get('image_id')
+                        'image_id': data.get('image_id'),
+                        'material_titles': json.dumps(data.get('material_titles', [])),  
+                        'technique_titles': json.dumps(data.get('technique_titles', [])),  
+                        'theme_titles': json.dumps(data.get('theme_titles', [])),  
+                        'section_titles': json.dumps(data.get('section_titles', []))
                     }
 
                     Artwork.objects.update_or_create(

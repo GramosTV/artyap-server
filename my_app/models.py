@@ -29,6 +29,13 @@ class Gallery(models.Model):
     def __str__(self):
         return self.title
 
+class ArtworkType(models.Model):
+            id = models.IntegerField(primary_key=True)
+            title = models.CharField(max_length=255)
+
+            def __str__(self):
+                return self.title
+
 class Artwork(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.TextField(null=True, blank=True)
@@ -53,11 +60,15 @@ class Artwork(models.Model):
     copyright_notice = models.CharField(max_length=255, null=True, blank=True)
     is_on_view = models.BooleanField(default=False, null=True, blank=True)
     gallery = models.ForeignKey(Gallery, on_delete=models.SET_NULL, null=True, blank=True)
-    artwork_type_id = models.IntegerField(null=True, blank=True)
+    artworktype = models.ForeignKey(ArtworkType, on_delete=models.SET_NULL, null=True, blank=True)
     department_id = models.CharField(max_length=50, null=True, blank=True)
     artist = models.ForeignKey(Artist, on_delete=models.SET_NULL, null=True, blank=True)
     style_id = models.CharField(max_length=255, null=True, blank=True)
     image_id = models.CharField(max_length=255, null=True, blank=True)
+    material_titles = models.JSONField(default=list, blank=True, null=True)
+    technique_titles = models.JSONField(default=list, blank=True, null=True)
+    theme_titles = models.JSONField(default=list, blank=True, null=True)
+    section_titles = models.JSONField(default=list, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -79,3 +90,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.text[:20]}"
+

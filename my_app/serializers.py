@@ -9,10 +9,14 @@ class ArtistSerializer(serializers.ModelSerializer):
 
 class ArtworkSerializer(serializers.ModelSerializer):
     artist = ArtistSerializer(read_only=True)
+    material_titles = serializers.JSONField()
+    technique_titles = serializers.JSONField()
+    theme_titles = serializers.JSONField()
+    section_titles = serializers.JSONField()
 
     class Meta:
         model = Artwork
-        fields = ['id', 'title', 'main_reference_number', 'description', 'artist_display', 'place_of_origin', 'dimensions', 'medium_display', 'image_id', 'artist']
+        fields = ['id', 'title', 'main_reference_number', 'description', 'artist_display', 'place_of_origin', 'dimensions', 'medium_display', 'image_id', 'artist', 'material_titles', 'technique_titles', 'theme_titles', 'section_titles', 'date_start', 'date_end']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

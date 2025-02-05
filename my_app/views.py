@@ -160,3 +160,10 @@ def add_comment(request):
 
     serializer = CommentSerializer(comment)
     return Response(serializer.data, status=201)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_authenticated_user(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
