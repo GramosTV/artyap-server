@@ -171,17 +171,14 @@ def get_authenticated_user(request):
 
 @api_view(['GET'])
 def trending_artworks(request):
-    # Get the latest comment created_at for each artwork
     latest_comment = Comment.objects.filter(
         artwork=OuterRef('pk')
-    ).order_by('-created_at')  # Sort by created_at descending
+    ).order_by('-created_at')
 
-    # Annotate each artwork with the latest comment's created_at date
     trending_artworks = Artwork.objects.annotate(
         latest_comment_date=Subquery(latest_comment.values('created_at')[:1])
-    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:20]
+    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:70]
 
-    # Serialize the trending artworks
     serializer = ArtworkSerializer(trending_artworks, many=True)
     
     return Response(serializer.data)

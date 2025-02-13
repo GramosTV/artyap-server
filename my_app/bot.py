@@ -6,11 +6,13 @@ from django.utils import timezone
 from .models import Artwork, Comment
 from django.contrib.auth import get_user_model
 from decouple import config
+from google import genai
 
 openai_client = openai.OpenAI(
     api_key=config('OPENAI_API_KEY'),
     base_url="https://models.inference.ai.azure.com"
 )
+client = genai.Client(api_key=config('GOOGLE_API_KEY'))
 User = get_user_model()
 
 
@@ -30,24 +32,55 @@ def generate_comment(artwork):
 
     except openai.OpenAIError as e:
         print(f"OpenAI API error: {e}")
-        return None
+        try:
+            response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+            )
+            return response.text.strip() if response.text else None
+        except Exception as e:
+            print(f"Google GenAI API error: {e}")
+            return None
 
 
 def generate_username():
     prompt = "Generate a realistic and concise username for an art forum user, it doesn't have to be art related, be creative. Reply with only the username, nothing else. You can use spaces, numbers, and special characters."
     
-    response = openai_client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return response.choices[0].message.content.strip() if response.choices else None
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.choices[0].message.content.strip() if response.choices else None
+
+    except openai.OpenAIError as e:
+        print(f"OpenAI API error: {e}")
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt
+            )
+            return response.text.strip() if response.text else None
+        except Exception as e:
+            print(f"Google GenAI API error: {e}")
+            return None
 
 def generate_password(length=12):
                 characters = string.ascii_letters + string.digits + string.punctuation
                 return ''.join(secrets.choice(characters) for _ in range(length))
 
 def post_random_comment():
-    artworks = list(Artwork.objects.all())
+    artworks = list(
+        Artwork.objects.filter(
+            artist__title__isnull=False,
+            title__isnull=False,
+            description__isnull=False
+        ).exclude(
+            artist__title="",
+            title="",
+            description=""
+        )
+    )
     if not artworks:
         print("No artworks available for commenting.")
         return None

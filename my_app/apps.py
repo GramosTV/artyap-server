@@ -13,7 +13,7 @@ class MyAppConfig(AppConfig):
         def start_bot():
             while True:
                 post_random_comment()
-                time.sleep(60)
+                time.sleep(20)
         if (config('RUN_BOT', default=False, cast=bool)):
             thread = threading.Thread(target=start_bot, daemon=True)
             thread.start()
