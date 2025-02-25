@@ -17,6 +17,12 @@ class ArtworkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artwork
         fields = ['id', 'title', 'main_reference_number', 'description', 'artist_display', 'place_of_origin', 'dimensions', 'medium_display', 'image_id', 'artist', 'material_titles', 'technique_titles', 'theme_titles', 'section_titles', 'date_start', 'date_end']
+        
+class ArtworkIdSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Artwork
+        fields = ['id', 'image_id']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

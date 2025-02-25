@@ -3,7 +3,7 @@ from django.views import View
 from .models import Artwork, Comment
 from django.db.models import OuterRef, Subquery, Q, Min, Max
 from rest_framework import generics, viewsets, permissions
-from .serializers import ArtworkSerializer, UserSerializer, CommentSerializer
+from .serializers import ArtworkIdSerializer, ArtworkSerializer, UserSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 import random
@@ -113,7 +113,7 @@ def login_view(request):
     if user:
         login(request, user)
         return Response({'message': 'Login successful'})
-    return Response({'error': 'Invalid Credentials'}, status=400)
+    return Response({'error': 'Invalid Credentials'}, status=401)
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -177,8 +177,8 @@ def trending_artworks(request):
 
     trending_artworks = Artwork.objects.annotate(
         latest_comment_date=Subquery(latest_comment.values('created_at')[:1])
-    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:70]
+    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:65]
 
-    serializer = ArtworkSerializer(trending_artworks, many=True)
+    serializer = ArtworkIdSerializer(trending_artworks, many=True)
     
     return Response(serializer.data)
