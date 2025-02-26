@@ -122,7 +122,7 @@ def register_view(request):
     if serializer.is_valid():
         serializer.save()
         return Response({'message': 'Registration successful'}, status=201)
-    return Response(serializer.errors, status=400)
+    return Response({'error': serializer.errors}, status=400)
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
