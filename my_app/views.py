@@ -177,8 +177,44 @@ def trending_artworks(request):
 
     trending_artworks = Artwork.objects.annotate(
         latest_comment_date=Subquery(latest_comment.values('created_at')[:1])
-    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:65]
+    ).filter(latest_comment_date__isnull=False).order_by('-latest_comment_date')[:75]
 
     serializer = ArtworkIdSerializer(trending_artworks, many=True)
     
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+
+    if not user.check_password(old_password):
+        return Response({'error': 'Old password is incorrect'}, status=401)
+
+    if not new_password:
+        return Response({'error': 'New password is required'}, status=400)
+
+    if len(new_password) < 6:
+        return Response({'error': 'New password must be at least 6 characters long'}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+    return Response({'message': 'Password changed successfully'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_username(request):
+    user = request.user
+    new_username = request.data.get('new_username')
+
+    if not new_username:
+        return Response({'error': 'New username is required'}, status=400)
+
+    if get_user_model().objects.filter(username=new_username).exists():
+        return Response({'error': 'Username already taken'}, status=409)
+
+    user.username = new_username
+    user.save()
+    return Response({'message': 'Username changed successfully'})
